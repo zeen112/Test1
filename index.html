@@ -389,6 +389,20 @@ body.footer-visible footer {
                 hitungDashboard(dataKeuangan); // Update dashboard setelah menetapkan anggaran
             }*/
 
+            // Fungsi untuk menyimpan data ke file JSON (download)
+            function simpanDataKeJSON(data) {
+                const jsonData = JSON.stringify(data, null, 2); // Convert data to JSON string
+                const blob = new Blob([jsonData], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'database.json'; // File name
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url); // Clean up
+            }
+
             // Muat data awal
             let dataKeuangan = muatData();
             tampilkanCatatan(dataKeuangan);
@@ -419,6 +433,9 @@ body.footer-visible footer {
 
                 // Reset form
                 formTambah.reset();
+
+                // Simpan ke JSON dan download
+                simpanDataKeJSON(dataKeuangan);
             });
 
             // Event listener untuk tombol tetapkan anggaran
@@ -428,9 +445,59 @@ body.footer-visible footer {
 </body>
 </html>
 <script>
-if (catatan.jenis === 'Pemasukan') {
-    row.classList.add('pemasukan');
-} else if (catatan.jenis === 'Pengeluaran') {
-    row.classList.add('pengeluaran');
-}
+npm install express body-parser
+const express = require('express');
+const bodyParser = require('body-parser');
+const fs = require('fs');
+
+const app = express();
+const port = 3000;
+
+app.use(bodyParser.json()); // for parsing application/json
+app.use(express.static('public')); // Serve static files (HTML, CSS, JS)
+
+app.post('/simpan-data', (req, res) => {
+    const data = req.body;
+
+    fs.writeFile('database.json', JSON.stringify(data, null, 2), (err) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Gagal menyimpan data.');
+        }
+        console.log('Data berhasil disimpan ke database.json');
+        res.status(200).send('Data berhasil disimpan.');
+    });
+});
+
+app.listen(port, () => {
+    console.log(`Server berjalan di http://localhost:${port}`);
+});
+my-app/
+├── public/       (Direktori untuk file HTML, CSS, JS)
+│   └── index.html (File HTML Anda)
+├── server.js     (File server Node.js)
+├── package.json  (File konfigurasi Node.js)
+└── database.json (File database - akan dibuat oleh server)
+fetch('/simpan-data', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(dataKeuangan)
+})
+.then(response => {
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
+    }
+    return response.text();
+})
+.then(data => {
+    console.log(data); // Tampilkan pesan dari server
+    alert('Data berhasil disimpan ke server!');
+})
+.catch(error => {
+    console.error('There was a problem saving the data:', error);
+    alert('Gagal menyimpan data ke server.');
+});
+node server.js
 </script>

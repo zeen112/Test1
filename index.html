@@ -127,6 +127,15 @@
         #catatan #tabel-catatan tbody tr:nth-child(even) {
             background-color: #f9f9f9;
         }
+
+        /* Tambahkan kelas untuk warna baris */
+        .pemasukan {
+            background-color: #d4edda !important; /* Hijau muda */
+        }
+
+        .pengeluaran {
+            background-color: #f8d7da !important; /* Merah muda */
+        }
         /* Budget Styling */
         /*#anggaran {
             text-align: center;
@@ -334,6 +343,13 @@ body.footer-visible footer {
                     row.insertCell().textContent = catatan.deskripsi;
                     row.insertCell().textContent = catatan.jenis;
                     row.insertCell().textContent = 'Rp ' + formatRupiah(catatan.jumlah); // Format angka
+
+                    // Tambahkan kelas berdasarkan jenis transaksi
+                    if (catatan.jenis === 'Pemasukan') {
+                        row.classList.add('pemasukan');
+                    } else if (catatan.jenis === 'Pengeluaran') {
+                        row.classList.add('pengeluaran');
+                    }
                 });
             }
 
@@ -411,3 +427,10 @@ body.footer-visible footer {
     </script>
 </body>
 </html>
+<script>
+if (catatan.jenis === 'Pemasukan') {
+    row.classList.add('pemasukan');
+} else if (catatan.jenis === 'Pengeluaran') {
+    row.classList.add('pengeluaran');
+}
+</script>

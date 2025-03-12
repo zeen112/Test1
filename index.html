@@ -192,6 +192,66 @@ footer {
 body.footer-visible footer {
   opacity: 1; /* Muncul saat class 'footer-visible' ditambahkan */
 }
+
+/* Style untuk popup */
+.popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none; /* Sembunyikan popup secara default */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.popup-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.popup-buttons {
+    margin-top: 20px;
+}
+
+.popup-buttons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    margin: 0 10px;
+}
+
+.popup-buttons button.reset {
+    background-color: #dc3545; /* Warna merah untuk tombol reset */
+    color: white;
+}
+
+.popup-buttons button.cancel {
+    background-color: #6c757d; /* Warna abu-abu untuk tombol batal */
+    color: white;
+}
+
+/* Style untuk tombol reset */
+.reset-data {
+    background-color: #dc3545; /* Warna merah */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.reset-data:hover {
+    background-color: #c82333; /* Warna merah lebih gelap saat hover */
+}
     </style>
 
 <script>
@@ -289,6 +349,18 @@ body.footer-visible footer {
         <p>&copy; 2024 Aplikasi Manajemen Keuangan</p>
     </footer>
 
+    <!-- Popup Reset Konfirmasi -->
+    <div class="popup" id="resetPopup">
+        <div class="popup-content">
+            <h3>Konfirmasi Reset Data</h3>
+            <p>Apakah Anda yakin ingin menghapus semua data keuangan?</p>
+            <div class="popup-buttons">
+                <button class="reset" id="confirmReset">Reset Data</button>
+                <button class="cancel" id="cancelReset">Batal</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         function formatNumber(input) {
             // Hilangkan semua karakter selain angka
@@ -308,6 +380,9 @@ body.footer-visible footer {
             const totalPengeluaranEl = document.getElementById('total-pengeluaran');
             const saldoEl = document.getElementById('saldo');
             const resetButton = document.getElementById('reset-data'); // Tombol Reset
+            const resetPopup = document.getElementById('resetPopup'); // Popup
+            const confirmResetButton = document.getElementById('confirmReset'); // Tombol Reset di Popup
+            const cancelResetButton = document.getElementById('cancelReset'); // Tombol Batal di Popup
 
             // Elemen Anggaran
             /*const formAnggaran = document.getElementById('form-anggaran');
@@ -426,21 +501,25 @@ body.footer-visible footer {
             // Event listener untuk tombol tetapkan anggaran
             /*tetapkanAnggaranBtn.addEventListener('click', tetapkanAnggaran);*/
 
-            // Event listener untuk tombol reset
+            // Event listener untuk tombol reset (menampilkan popup)
             resetButton.addEventListener('click', function() {
+                resetPopup.style.display = 'flex'; // Tampilkan popup
+            });
+
+            // Event listener untuk tombol reset di popup (melakukan reset data)
+            confirmResetButton.addEventListener('click', function() {
                 localStorage.removeItem('catatanKeuangan'); // Hapus data dari localStorage
                 dataKeuangan = []; // Reset array data
                 tampilkanCatatan(dataKeuangan); // Tampilkan tabel kosong
                 hitungDashboard(dataKeuangan); // Reset dashboard
+                resetPopup.style.display = 'none'; // Sembunyikan popup
+            });
+
+            // Event listener untuk tombol batal di popup (membatalkan reset)
+            cancelResetButton.addEventListener('click', function() {
+                resetPopup.style.display = 'none'; // Sembunyikan popup
             });
         });
     </script>
 </body>
 </html>
-<script>
-if (catatan.jenis === 'Pemasukan') {
-    row.classList.add('pemasukan');
-} else if (catatan.jenis === 'Pengeluaran') {
-    row.classList.add('pengeluaran');
-}
-</script>

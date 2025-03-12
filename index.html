@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Manajemen Keuangan</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1em 0;
+            text-align: center;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        section {
+            margin-bottom: 20px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            border-bottom: 2px solid #333;
+            padding-bottom: 0.5em;
+            margin-bottom: 1em;
+        }
+
+        /* Form Styling */
+        #form-catatan .form-group {
+            margin-bottom: 15px;
+        }
+
+        #form-catatan label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        #form-catatan input[type="date"],
+        #form-catatan input[type="text"],
+        #form-catatan input[type="number"],
+        #form-catatan select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box; /* Important for padding and border to be included in the element's total width and height */
+        }
+
+        #form-catatan button {
+            background-color: #5cb85c;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        #form-catatan button:hover {
+            background-color: #449d44;
+        }
+
+        /* Dashboard Styling */
+        #dashboard #ringkasan {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+
+        #dashboard .card {
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            padding: 15px;
+            text-align: center;
+            width: 200px;
+            margin-bottom: 15px;
+        }
+
+        #dashboard .card h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        #dashboard .card p {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #337ab7;
+        }
+
+        /* Table Styling */
+        #catatan #tabel-catatan {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        #catatan #tabel-catatan th,
+        #catatan #tabel-catatan td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        #catatan #tabel-catatan th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        #catatan #tabel-catatan tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        /* Budget Styling */
+        /*#anggaran {
+            text-align: center;
+        }
+
+        #anggaran h2 {
+            margin-bottom: 20px;
+        }
+
+        #anggaran #form-anggaran {
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        #anggaran #form-anggaran input[type="number"] {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        #anggaran #form-anggaran button {
+            background-color: #337ab7;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        #anggaran #form-anggaran button:hover {
+            background-color: #235a81;
+        }
+
+        #anggaran #sisa-anggaran {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #5cb85c;
+        }*/
+footer {
+  text-align: center;
+  padding: 1em 0;
+  background-color: rgba(51, 51, 51, 0.5); /* Warna latar belakang dengan transparansi */
+  color: #fff;
+  position: bottom; /* Ubah ke absolute */
+  bottom: 0;
+  width: 100%;
+  opacity: 0; /* Awalnya tidak terlihat */
+  transition: opacity 0.5s ease-in-out; /* Efek transisi */
+  z-index: 100; /* Pastikan di atas konten lain */
+}
+
+body.footer-visible footer {
+  opacity: 1; /* Muncul saat class 'footer-visible' ditambahkan */
+}
+</style>
+
+<script>
+  window.addEventListener('scroll', function() {
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+      document.body.classList.add('footer-visible');
+    } else {
+      document.body.classList.remove('footer-visible');
+    }
+  });
+</script>
+</head>
+<body>
+    <header>
+        <h1>Aplikasi Manajemen Keuangan</h1>
+    </header>
+
+    <main>
+        <section id="form-catatan">
+            <h2>Tambah Catatan Keuangan</h2>
+            <form id="form-tambah">
+                <div class="form-group">
+                    <label for="tanggal">Tanggal:</label>
+                    <input type="date" id="tanggal" name="tanggal" required>
+                </div>
+                <div class="form-group">
+                    <label for="deskripsi">Deskripsi:</label>
+                    <input type="text" id="deskripsi" name="deskripsi" required>
+                </div>
+                <div class="form-group">
+                    <label for="jenis">Jenis:</label>
+                    <select id="jenis" name="jenis" required>
+                        <option value="Pemasukan">Pemasukan</option>
+                        <option value="Pengeluaran">Pengeluaran</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="jumlah">Jumlah:</label>
+                    <input type="number" id="jumlah" name="jumlah" onkeyup="formatNumber(this)" required>
+                </div>
+                <button type="submit">Tambah Catatan</button>
+            </form>
+        </section>
+
+        <section id="dashboard">
+            <h2>Dashboard</h2>
+            <div id="ringkasan">
+                <div class="card">
+                    <h3>Total Pemasukan</h3>
+                    <p id="total-pemasukan">Rp 0</p>
+                </div>
+                <div class="card">
+                    <h3>Total Pengeluaran</h3>
+                    <p id="total-pengeluaran">Rp 0</p>
+                </div>
+                <div class="card">
+                    <h3>Saldo</h3>
+                    <p id="saldo">Rp 0</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bagian Anggaran Bulanan -->
+        <!--<section id="anggaran">
+            <h2>Anggaran Bulanan</h2>
+            <form id="form-anggaran">
+                <input type="number" id="input-anggaran" placeholder="Masukkan Anggaran Bulanan" onkeyup="formatNumber(this)">
+                <button type="button" id="tetapkan-anggaran">Tetapkan Anggaran</button>
+            </form>
+            <div>
+                Sisa Anggaran: <span id="sisa-anggaran">Rp 0</span>
+            </div>
+        </section>-->
+
+        <section id="catatan">
+            <h2>Semua Catatan</h2>
+            <table id="tabel-catatan">
+                <thead>
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Deskripsi</th>
+                        <th>Jenis</th>
+                        <th>Jumlah</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data catatan akan ditambahkan di sini oleh JavaScript -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Aplikasi Manajemen Keuangan</p>
+    </footer>
+
+    <script>
+        function formatNumber(input) {
+            // Hilangkan semua karakter selain angka
+            let value = input.value.replace(/\D/g, '');
+
+            // Format angka dengan menambahkan titik sebagai pemisah ribuan
+            value = Number(value).toLocaleString('id-ID');
+
+            // Set nilai kembali ke input
+            input.value = value;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const formTambah = document.getElementById('form-tambah');
+            const tabelCatatan = document.getElementById('tabel-catatan').getElementsByTagName('tbody')[0];
+            const totalPemasukanEl = document.getElementById('total-pemasukan');
+            const totalPengeluaranEl = document.getElementById('total-pengeluaran');
+            const saldoEl = document.getElementById('saldo');
+
+            // Elemen Anggaran
+            /*const formAnggaran = document.getElementById('form-anggaran');
+            const inputAnggaran = document.getElementById('input-anggaran');
+            const tetapkanAnggaranBtn = document.getElementById('tetapkan-anggaran');
+            const sisaAnggaranEl = document.getElementById('sisa-anggaran');*/
+
+            let anggaranBulanan = 0;
+            let sisaAnggaran = 0;
+
+            // Fungsi untuk memformat angka ke format Rupiah dengan titik
+            function formatRupiah(angka) {
+                const formatter = new Intl.NumberFormat('id-ID');
+                return formatter.format(angka);
+            }
+
+            // Fungsi untuk memuat data dari localStorage
+            function muatData() {
+                const data = JSON.parse(localStorage.getItem('catatanKeuangan')) || [];
+                return data;
+            }
+
+            // Fungsi untuk menyimpan data ke localStorage
+            function simpanData(data) {
+                localStorage.setItem('catatanKeuangan', JSON.stringify(data));
+            }
+
+            // Fungsi untuk menampilkan catatan di tabel
+            function tampilkanCatatan(data) {
+                tabelCatatan.innerHTML = ''; // Bersihkan tabel
+
+                data.forEach(catatan => {
+                    const row = tabelCatatan.insertRow();
+                    row.insertCell().textContent = catatan.tanggal;
+                    row.insertCell().textContent = catatan.deskripsi;
+                    row.insertCell().textContent = catatan.jenis;
+                    row.insertCell().textContent = 'Rp ' + formatRupiah(catatan.jumlah); // Format angka
+                });
+            }
+
+            // Fungsi untuk menghitung dashboard
+            function hitungDashboard(data) {
+                let totalPemasukan = 0;
+                let totalPengeluaran = 0;
+
+                data.forEach(catatan => {
+                    if (catatan.jenis === 'Pemasukan') {
+                        totalPemasukan += parseFloat(catatan.jumlah);
+                    } else if (catatan.jenis === 'Pengeluaran') {
+                        totalPengeluaran += parseFloat(catatan.jumlah);
+                    }
+                });
+
+                const saldo = totalPemasukan - totalPengeluaran;
+
+                totalPemasukanEl.textContent = 'Rp ' + formatRupiah(totalPemasukan);
+                totalPengeluaranEl.textContent = 'Rp ' + formatRupiah(totalPengeluaran);
+                saldoEl.textContent = 'Rp ' + formatRupiah(saldo);
+
+                // Update sisa anggaran
+                /*sisaAnggaran = anggaranBulanan - totalPengeluaran;
+                sisaAnggaranEl.textContent = 'Rp ' + formatRupiah(sisaAnggaran);*/
+            }
+
+            // Fungsi untuk menetapkan anggaran bulanan
+            /*function tetapkanAnggaran() {
+                // Hilangkan semua karakter selain angka dan titik
+                let anggaran = inputAnggaran.value.replace(/\D/g, '');
+                anggaranBulanan = parseFloat(anggaran) || 0;
+
+                sisaAnggaran = anggaranBulanan;
+                sisaAnggaranEl.textContent = 'Rp ' + formatRupiah(sisaAnggaran);
+                inputAnggaran.value = ''; // Reset input
+                hitungDashboard(dataKeuangan); // Update dashboard setelah menetapkan anggaran
+            }*/
+
+            // Muat data awal
+            let dataKeuangan = muatData();
+            tampilkanCatatan(dataKeuangan);
+            hitungDashboard(dataKeuangan);
+
+            // Event listener untuk form
+            formTambah.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const tanggal = document.getElementById('tanggal').value;
+                const deskripsi = document.getElementById('deskripsi').value;
+                const jenis = document.getElementById('jenis').value;
+                // Hilangkan semua karakter selain angka dan titik
+                let jumlah = document.getElementById('jumlah').value.replace(/\D/g, '');
+                const jumlahFloat = parseFloat(jumlah) || 0;
+
+                const catatanBaru = {
+                    tanggal: tanggal,
+                    deskripsi: deskripsi,
+                    jenis: jenis,
+                    jumlah: jumlahFloat
+                };
+
+                dataKeuangan.push(catatanBaru);
+                simpanData(dataKeuangan);
+                tampilkanCatatan(dataKeuangan);
+                hitungDashboard(dataKeuangan);
+
+                // Reset form
+                formTambah.reset();
+            });
+
+            // Event listener untuk tombol tetapkan anggaran
+            /*tetapkanAnggaranBtn.addEventListener('click', tetapkanAnggaran);*/
+        });
+    </script>
+</body>
+</html>
